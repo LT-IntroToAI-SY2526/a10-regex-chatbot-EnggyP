@@ -153,17 +153,43 @@ def get_death_date(name: str) -> str:
     return match.group("death")
    
 
-def get_when_famous(name: str) -> str:
+def get_fame_date(name: str) -> str:
+    # Gets the year a person became famous (approx)
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = r"(?Famous)(?:[\w \d,]*\()(?P<famous>\d{4}-\d{2}-\d{2})"
+    pattern = r"(?:Years active)[^\d]*(?P<fame>\d{4})"
     error_text = (
-        "Page infobox has no death information (at least none in xxxx-xx-xx format)"
+        "Page infobox has no fame/years-active information (at least none in xxxx-xx-xx format)"
+    )
+    match = get_match(infobox_text, pattern, error_text)
+    
+    return match.group("fame")
+
+def get_nationality(name:str) -> str:
+    """ Gets nationality of the given person
+    
+    Args:
+        name - name of the person
+
+    Returns: 
+        nationality of the given person
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    print(infobox_text)
+    pattern = r"(?:Nationality|Citizenship)(?:\D*)(?P<nation>[A-Za-z ]+)"
+    error_text = (
+        "Page infobox has no fame/years-active information (at least none in xxxx-xx-xx format)"
     )
     match = get_match(infobox_text, pattern, error_text)
 
-    return match.group("famous")
+    return match.group("nation").strip()
 
-
+def get_graduation_date(name: str) -> str:
+    """Gets gradution year of the person"""
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    pattern = r"(?:Alma mater|Education)(?:.*?)(\d{4})"
+    error_text = "Page infobox has no graduation information (at least none in xxxx-xx-xx format)"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("graduation")
 
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
@@ -203,6 +229,14 @@ def polar_radius(matches: List[str]) -> List[str]:
     """
     return [get_polar_radius(matches[0])]
 
+def fame_date(matches: List[str]) -> List[str]:
+    return [get_fame_date(" ".join(matches))]
+
+def nationality(matches: List[str]) -> List[str]:
+    return [get_nationality(" ".join(matches))]
+
+def graduation_date(matches: List[str]) -> List[str]:
+    return [get_graduation_date(" ".join(matches))]
 
 # dummy argument is ignored and doesn't matter
 def bye_action(dummy: List[str]) -> None:
@@ -218,8 +252,11 @@ Action = Callable[[List[str]], List[Any]]
 # here, after all of the function definitions
 pa_list: List[Tuple[Pattern, Action]] = [
     ("when was % born".split(), birth_date),
-     ("when did % die".split(), death_date),
+    ("when did % die".split(), death_date),
     ("what is the polar radius of %".split(), polar_radius),
+    ("what is % nationality".split(), nationality),
+    ("when did % become famous".split(), fame_date),
+    ("when did % graduate".split(), graduation_date),
     (["bye"], bye_action),
 ]
 
