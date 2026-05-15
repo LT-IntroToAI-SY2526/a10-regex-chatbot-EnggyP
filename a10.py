@@ -167,8 +167,7 @@ def get_fame_date(name: str) -> str:
 def get_occupation(name: str) -> str:
     """Gets occupation(s) of the given person"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    print(infobox_text)
-    pattern = r"(?:Occupations?)(?<occupation>[A-Za-z]+)"
+    pattern = r"Occupations?\s*(?P<occupation>[A-Za-z ]+?)(?:,|\n|$)"
     error_text = "Page infobox has no occupation information"
     match = get_match(infobox_text, pattern, error_text)
     return match.group("occupation").strip()
