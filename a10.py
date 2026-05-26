@@ -162,86 +162,81 @@ def get_notable_works(name: str) -> str:
         "Page infobox has no notable works information (at least none in xxxx-xx-xx format)"
     )
     match = get_match(infobox_text, pattern, error_text)
-    
-    return match.group("notable_works")
+    return match.group("works")
 
 def get_awards(name: str) -> str:
     # Gets the year a person became famous (approx)
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = 
+    pattern = r"(?:Awards|Honors)\s*[:\-]?\s*(?P<awards>.+?)(?:\n|$)"
     error_text = (
         "Page infobox has no awards information (at least none in xxxx-xx-xx format)"
     )
     match = get_match(infobox_text, pattern, error_text)
-    
     return match.group("awards")
 
 def get_spouse(name: str) -> str:
-    """Gets occupation(s) of the given person"""
+    """Gets spouse(s) of the given person"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = 
+    pattern = r"(?:Spouse|Spouses)\s*[:\-]?\s*(?P<spouse>[^<\|\n]+)"
     error_text = "Page infobox has no spouse information"
     match = get_match(infobox_text, pattern, error_text)
-    return match.group("spouse").strip()
-
+    return match.group("spouse")
 
 def get_children(name: str) -> str:
     """Gets education / alma mater of the person"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-
-    # Capture the entire education/alma mater field up to newline or next infobox field
-    pattern =
+    pattern = r"(?:Children)\s*[:\-]?\s*(?P<children>.+?)(?:\n|$)"
     error_text = "Page infobox has no children information"
     match = get_match(infobox_text, pattern, error_text)
-    return match.group("children").strip()
+    return match.group("children")
 
 def get_net_worth(name: str) -> str:
     """Gets occupation(s) of the given person"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = 
+    pattern = r"(?:Net worth)\s*[:\-]?\s*(?P<worth>.+?)(?:\n|$)"
     error_text = "Page infobox has no net worth information"
     match = get_match(infobox_text, pattern, error_text)
-    return match.group("net_worth").strip()
+    return match.group("worth")
 
 def get_parents(name: str) -> str:
     """Gets occupation(s) of the given person"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = 
+    pattern = r"(?:Parent|Parents)\s*[:\-]?\s*(?P<parents>.+?)(?:\n|$)"
     error_text = "Page infobox has no parents information"
     match = get_match(infobox_text, pattern, error_text)
-    return match.group("parents").strip()
+    return match.group("parents")
 
 def get_political_party(name: str) -> str:
     """Gets occupation(s) of the given person"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = 
+    pattern = r"(?:Political party|Party)\s*[:\-]?\s*(?P<party>.+?)(?:\n|$)"
     error_text = "Page infobox has no political party information"
     match = get_match(infobox_text, pattern, error_text)
-    return match.group("political_party").strip()
+    return match.group("party")
 
 def get_nationality(name: str) -> str:
     """Gets occupation(s) of the given person"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = 
+    pattern = r"(?:Nationality)\s*[:\-]?\s*(?P<nationality>.+?)(?:\n|$)"
     error_text = "Page infobox has no nationality information"
     match = get_match(infobox_text, pattern, error_text)
-    return match.group("nationality").strip()
+    return match.group("nationality")
 
 def get_genre(name: str) -> str:
     """Gets occupation(s) of the given person"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = 
+    pattern = r"(?:Genre|Genres)\s*[:\-]?\s*(?P<genre>.+?)(?:\n|$)"
     error_text = "Page infobox has no genre information"
     match = get_match(infobox_text, pattern, error_text)
-    return match.group("genre").strip()
+    return match.group("genre")
 
 def get_religion(name: str) -> str:
     """Gets occupation(s) of the given person"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = 
+    pattern = r"(?:Religion|Religious views)\s*[:\-]?\s*(?P<religion>.+?)(?:\n|$)"
     error_text = "Page infobox has no religion information"
     match = get_match(infobox_text, pattern, error_text)
-    return match.group("religion").strip()
+    return match.group("religion")
 
 
 # below are a set of actions. Each takes a list argument and returns a list of answers
@@ -283,42 +278,36 @@ def polar_radius(matches: List[str]) -> List[str]:
     return [get_polar_radius(matches[0])]
 
 def notable_works(matches: List[str]) -> List[str]:
-    return [get_fame_date(" ".join(matches))]
+    return [get_notable_works(" ".join(matches))]
 
 def awards(matches: List[str]) -> List[str]:
-    return [get_occupation(" ".join(matches))]
+    return [get_awards(" ".join(matches))]
 
 def spouse(matches: List[str]) -> List[str]:
-    return [get_education(" ".join(matches))]
+    return [get_spouse(" ".join(matches))]
 
 def children(matches: List[str]) -> List[str]:
-    return [get_education(" ".join(matches))]
+    return [get_children(" ".join(matches))]
 
 def net_worth(matches: List[str]) -> List[str]:
-    return [get_education(" ".join(matches))]
+    return [get_net_worth(" ".join(matches))]
 
 def parents(matches: List[str]) -> List[str]:
-    return [get_education(" ".join(matches))]
+    return [get_parents(" ".join(matches))]
 
 def political_party(matches: List[str]) -> List[str]:
-    return [get_education(" ".join(matches))]
+    return [get_political_party(" ".join(matches))]
 
 def nationality(matches: List[str]) -> List[str]:
-    return [get_education(" ".join(matches))]
+    return [get_nationality(" ".join(matches))]
 
 def genre(matches: List[str]) -> List[str]:
-    return [get_education(" ".join(matches))]
+    return [get_genre(" ".join(matches))]
 
 def religion(matches: List[str]) -> List[str]:
-    return [get_education(" ".join(matches))]
+    return [get_religion(" ".join(matches))]
 
 # notable works, awards, spouse, children, net worth, parents, political party, nationality, genre, religion
-
-
-
-
-
-
 
 
 # dummy argument is ignored and doesn't matter
@@ -337,19 +326,16 @@ pa_list: List[Tuple[Pattern, Action]] = [
     ("when was % born".split(), birth_date),
     ("when did % die".split(), death_date),
     ("what is the polar radius of %".split(), polar_radius),
-    ("what is % occupation".split(), occupation),
-    ("when did % become famous".split(), fame_date),
-    ("what is % education".split(), education),
-
-
-
-
-
-
-
-
-
-
+    ("what are % notable works".split(), notable_works), # needs spaces
+    ("what awards did % recieve".split(), awards), # works perfect
+    ("who is % spouse".split(), spouse), # too much info
+    ("who are % children".split(), children), # too much info
+    ("what is % net worth".split(), net_worth),
+    ("who are % parents".split(), parents), # too much info
+    ("what is % political party".split(), political_party),
+    ("what is % nationality".split(), nationality),
+    ("what genre is % known for".split(), genre),
+    ("what is % religion".split(), religion),
     (["bye"], bye_action),
 ]
 
