@@ -194,13 +194,24 @@ def get_children(name: str) -> str:
     match = get_match(infobox_text, pattern, error_text)
     return match.group("children")
 
-def get_net_worth(name: str) -> str:
-    """Gets occupation(s) of the given person"""
+def get_death_place(name: str) -> str:
+    """Gets death place of the given person
+
+    Args:
+        name - name of the person
+
+    Returns:
+        death place of the given person
+    """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = r"(?:Net worth)\s*[:\-]?\s*(?P<worth>.+?)(?:\n|$)"
-    error_text = "Page infobox has no net worth information"
+
+    pattern = r"(?:Death place|Place of death)(?:\D*)(?P<place>.+?)(?:\||\n|$)"
+    error_text = (
+        "Page infobox has no death place information"
+    )
     match = get_match(infobox_text, pattern, error_text)
-    return match.group("worth")
+
+    return match.group("place").strip()
 
 def get_parents(name: str) -> str:
     """Gets occupation(s) of the given person"""
@@ -221,7 +232,7 @@ def get_political_party(name: str) -> str:
 def get_years_active(name: str) -> str:
     """Gets the years a person has been active/famous from their Wikipedia infobox."""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = r"(?:Years active|Active)\s*[:\-]?\s*(?P<years>[^\n]+)"
+    pattern = r"(?:Years active)\s*[:\-]?\s*(?P<years>[^\n]+|$)"
     error_text = (
         "Page infobox has no 'Years active' information"
     )
@@ -295,8 +306,8 @@ def spouse(matches: List[str]) -> List[str]:
 def children(matches: List[str]) -> List[str]:
     return [get_children(" ".join(matches))]
 
-def net_worth(matches: List[str]) -> List[str]:
-    return [get_net_worth(" ".join(matches))]
+def death_place(matches: List[str]) -> List[str]:
+    return [get_death_place(" ".join(matches))]
 
 def parents(matches: List[str]) -> List[str]:
     return [get_parents(" ".join(matches))]
@@ -336,7 +347,7 @@ pa_list: List[Tuple[Pattern, Action]] = [
     ("what awards did % recieve".split(), awards), # works perfect
     ("who is % spouse".split(), spouse), # works perfect
     ("who are % children".split(), children), # works fine
-    ("what is % net worth".split(), net_worth),
+    ("where is % death place".split(), death_place),
     ("who are % parents".split(), parents), 
     ("what is % political party".split(), political_party),
     ("what is % years active".split(), years_active), # works fine
