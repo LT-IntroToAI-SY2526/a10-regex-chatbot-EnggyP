@@ -157,7 +157,7 @@ def get_death_date(name: str) -> str:
    
 def get_notable_works(name: str) -> str:
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = r"(?:Notable works|Known for)\s*[:\-]?\s*(?P<works>.+?)(?:\n|$)"
+    pattern = r"(?:Notable work)\s*[:\-]?\s*(?P<works>.+?)(?:\n|$)"
     error_text = (
         "Page infobox has no notable works information (at least none in xxxx-xx-xx format)"
     )
@@ -177,16 +177,20 @@ def get_awards(name: str) -> str:
 def get_spouse(name: str) -> str:
     """Gets spouse(s) of the given person"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = r"(?:Spouse|Spouses)\s*[:\-]?\s*(?P<spouse>[^<\|\n]+)"
-    error_text = "Page infobox has no spouse information"
+    pattern = r"(?:Spouse)\s*[:\-]?\s*(?P<spouse>[A-Z][a-z]+\s[A-Z][a-z]+)"
+    error_text = (
+        "Page infobox has no spouse information"
+    )
     match = get_match(infobox_text, pattern, error_text)
     return match.group("spouse")
 
 def get_children(name: str) -> str:
-    """Gets education / alma mater of the person"""
+    """Gets children of the given person"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = r"(?:Children)\s*[:\-]?\s*(?P<children>.+?)(?:\n|$)"
-    error_text = "Page infobox has no children information"
+    pattern = r"(?:Children)\s*[:\-]?\s*(?P<children>[A-Z][a-z]+\s[A-Z][a-z]+)"
+    error_text = (
+        "Page infobox has no children information"
+    )
     match = get_match(infobox_text, pattern, error_text)
     return match.group("children")
 
@@ -214,13 +218,15 @@ def get_political_party(name: str) -> str:
     match = get_match(infobox_text, pattern, error_text)
     return match.group("party")
 
-def get_nationality(name: str) -> str:
-    """Gets occupation(s) of the given person"""
+def get_years_active(name: str) -> str:
+    """Gets the years a person has been active/famous from their Wikipedia infobox."""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = r"(?:Nationality)\s*[:\-]?\s*(?P<nationality>.+?)(?:\n|$)"
-    error_text = "Page infobox has no nationality information"
+    pattern = r"(?:Years active|Active)\s*[:\-]?\s*(?P<years>[^\n]+)"
+    error_text = (
+        "Page infobox has no 'Years active' information"
+    )
     match = get_match(infobox_text, pattern, error_text)
-    return match.group("nationality")
+    return match.group("years")
 
 def get_genre(name: str) -> str:
     """Gets occupation(s) of the given person"""
@@ -298,8 +304,8 @@ def parents(matches: List[str]) -> List[str]:
 def political_party(matches: List[str]) -> List[str]:
     return [get_political_party(" ".join(matches))]
 
-def nationality(matches: List[str]) -> List[str]:
-    return [get_nationality(" ".join(matches))]
+def years_active(matches: List[str]) -> List[str]:
+    return [get_years_active(" ".join(matches))]
 
 def genre(matches: List[str]) -> List[str]:
     return [get_genre(" ".join(matches))]
@@ -307,7 +313,7 @@ def genre(matches: List[str]) -> List[str]:
 def religion(matches: List[str]) -> List[str]:
     return [get_religion(" ".join(matches))]
 
-# notable works, awards, spouse, children, net worth, parents, political party, nationality, genre, religion
+# notable works, awards, spouse, children, net worth, parents, political party, years active, genre, religion
 
 
 # dummy argument is ignored and doesn't matter
@@ -326,14 +332,14 @@ pa_list: List[Tuple[Pattern, Action]] = [
     ("when was % born".split(), birth_date),
     ("when did % die".split(), death_date),
     ("what is the polar radius of %".split(), polar_radius),
-    ("what are % notable works".split(), notable_works), # needs spaces
+    ("what are % notable works".split(), notable_works), # works perfect
     ("what awards did % recieve".split(), awards), # works perfect
-    ("who is % spouse".split(), spouse), # too much info
-    ("who are % children".split(), children), # too much info
+    ("who is % spouse".split(), spouse), # works perfect
+    ("who are % children".split(), children), # works fine
     ("what is % net worth".split(), net_worth),
-    ("who are % parents".split(), parents), # too much info
+    ("who are % parents".split(), parents), 
     ("what is % political party".split(), political_party),
-    ("what is % nationality".split(), nationality),
+    ("what is % years active".split(), years_active), # works fine
     ("what genre is % known for".split(), genre),
     ("what is % religion".split(), religion),
     (["bye"], bye_action),
